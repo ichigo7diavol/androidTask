@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">App</string>
+    <string name="kIndexRequest">https://afternoon-chamber-10736.herokuapp.com/projects.json</string>
+    <string name="kCreateRequest">https://afternoon-chamber-10736.herokuapp.com/projects</string>
+
+</resources>
