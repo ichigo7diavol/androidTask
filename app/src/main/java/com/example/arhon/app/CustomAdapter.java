@@ -119,13 +119,13 @@ class CustomAdapter extends BaseAdapter {
                                         @Override
                                         public void onCompleted(Exception e, JsonObject result) { }});
 
-                            ListView lv = (ListView)((MainActivity)mInflater.getContext()).findViewById(R.id.mListView);
-                            ((TextView)((LinearLayout)getView(((JsonObject)buttonView.getTag()).get("index").getAsInt(), null, lv)).getChildAt(1)).setText("asdas");
-
-                            mData.get(((JsonObject)buttonView.getTag()).get("index").getAsInt()).getAsJsonObject().remove("isCompleted");
-                            mData.get(((JsonObject)buttonView.getTag()).get("index").getAsInt()).getAsJsonObject().addProperty("isCompleted", isChecked);
-
-                            notifyDataSetChanged();
+//                            ListView lv = (ListView)((MainActivity)mInflater.getContext()).findViewById(R.id.mListView);
+//                            ((TextView)((LinearLayout)getView(((JsonObject)buttonView.getTag()).get("index").getAsInt(), null, lv)).getChildAt(1)).setText("asdas");
+//
+//                            mData.get(((JsonObject)buttonView.getTag()).get("index").getAsInt()).getAsJsonObject().remove("isCompleted");
+//                            mData.get(((JsonObject)buttonView.getTag()).get("index").getAsInt()).getAsJsonObject().addProperty("isCompleted", isChecked);
+//
+//                            notifyDataSetChanged();
                         }
                     });
 
