@@ -29,13 +29,18 @@
                 android:text="Задачи"
                 android:textAlignment="center"
                 android:textColor="@color/systemWhiteColor"
-                android:textSize="24dp"/>
+                android:textSize="24dp"
+                fontPath="fonts/OpenSans-Regular.ttf"/>
+
         </android.support.v7.widget.Toolbar>
 
         <ListView
             android:id="@+id/mListView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:divider="@null"
+            android:dividerHeight="0dp"/>
+
     </LinearLayout>
 
     <com.scalified.fab.ActionButton
@@ -43,8 +48,9 @@
         android:layout_width="62dp"
         android:layout_height="60dp"
         android:layout_marginBottom="16dp"
+        android:layout_marginStart="304dp"
         android:theme="@style/AppTheme"
         app:layout_constraintBottom_toBottomOf="parent"
-        tools:layout_editor_absoluteX="315dp" />
+        app:layout_constraintStart_toStartOf="@+id/LinearLayout" />
 
 </android.support.constraint.ConstraintLayout>

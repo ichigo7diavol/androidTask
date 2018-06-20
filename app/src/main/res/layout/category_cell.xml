@@ -4,7 +4,10 @@
     android:layout_height="match_parent"
     android:id="@+id/category"
     android:layout_width="match_parent"
-    android:paddingVertical="5dp">
+    android:paddingVertical="15dp"
+    android:paddingLeft="15dp"
+    android:background="@drawable/check_state"
+    >
 
 </android.widget.TextView>
 

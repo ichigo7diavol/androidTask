@@ -9,13 +9,21 @@
         android:id="@+id/checkbox"
         android:layout_width= "wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/systemWhiteColor"/>
+        android:layout_marginLeft="10dp"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
+        android:background="@color/systemWhiteColor"
+        />
 
     <TextView
         android:id="@+id/text"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:background="@color/systemWhiteColor"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:textSize="12dp"
         android:gravity="center_vertical"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="#FF000000"

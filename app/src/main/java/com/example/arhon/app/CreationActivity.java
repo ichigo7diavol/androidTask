@@ -1,5 +1,6 @@
 package com.example.arhon.app;
 
+import android.content.Context;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
@@ -19,11 +20,17 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
+import com.koushikdutta.ion.future.ResponseFuture;
 import com.scalified.fab.ActionButton;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import io.github.inflationx.calligraphy3.CalligraphyConfig;
+import io.github.inflationx.calligraphy3.CalligraphyInterceptor;
+import io.github.inflationx.viewpump.ViewPump;
+import io.github.inflationx.viewpump.ViewPumpContextWrapper;
 
 public class CreationActivity extends AppCompatActivity {
 
@@ -35,11 +42,19 @@ public class CreationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_creation);
+
+        ViewPump.init(ViewPump.builder()
+                .addInterceptor(new CalligraphyInterceptor(
+                        new CalligraphyConfig.Builder()
+                                .setDefaultFontPath("fonts/OpenSans-Regular.ttf")
+                                .setFontAttrId(R.attr.fontPath)
+                                .build()))
+                .build());
+
         catId = new ArrayList<Integer>();
         ImageButton button = findViewById(R.id.back_button);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                isSaving = false;
                 finish();
             }
 
@@ -48,7 +63,9 @@ public class CreationActivity extends AppCompatActivity {
         ImageButton cr_button = findViewById(R.id.create_button);
         cr_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+
                 isSaving = true;
+                postServer();
                 finish();
             }
         });
@@ -93,26 +110,35 @@ public class CreationActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         getDelegate().onDestroy();
+    }
+
+    public void postServer () {
 
         if (!isSaving)
+            return;
+
+        if (((EditText)findViewById(R.id.editText2)).getText().toString().isEmpty())
+            return;
+
+        if (((ListView)findViewById(R.id.categoryList)).getCheckedItemPosition() == -1)
             return;
 
         JsonObject main = new JsonObject();
 
         JsonObject req = new JsonObject();
         req.addProperty("text",((EditText)findViewById(R.id.editText2)).getText().toString());
-        Log.i("My", String.valueOf(catId.get(((ListView)findViewById(R.id.categoryList)).getCheckedItemPosition())));
         req.addProperty("project_id", String.valueOf(catId.get(((ListView)findViewById(R.id.categoryList)).getCheckedItemPosition())));
 
         main.add("todo", req);
         main.addProperty("ContentType", "application/x-www-form-urlencoded; charset=UTF-8");
-
-        Ion.with(this)
+        ResponseFuture<JsonObject> waiter = Ion.with(this)
                 .load(getString(R.string.kCreateRequest))
                 .setJsonObjectBody(main)
-                .asJsonObject()
-                .setCallback(new FutureCallback<JsonObject>() {
-            @Override
-            public void onCompleted(Exception e, JsonObject result) { }});
+                .asJsonObject();
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(ViewPumpContextWrapper.wrap(newBase));
     }
 }

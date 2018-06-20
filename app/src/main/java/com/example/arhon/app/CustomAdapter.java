@@ -3,12 +3,16 @@ package com.example.arhon.app;
 import java.util.ArrayList;
 import java.util.TreeSet;
 import android.content.Context;
+import android.database.DataSetObserver;
+import android.graphics.Paint;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CompoundButton;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.CheckBox;
 
@@ -23,8 +27,8 @@ class CustomAdapter extends BaseAdapter {
     private static final int TYPE_SEPARATOR = 1;
 
     private ArrayList<JsonElement> mData = new ArrayList<JsonElement>();
-
     private TreeSet<Integer> sectionHeader = new TreeSet<Integer>();
+    private ArrayList<DataSetObserver> observers = new ArrayList<DataSetObserver>();
 
     private LayoutInflater mInflater;
 
@@ -80,12 +84,17 @@ class CustomAdapter extends BaseAdapter {
                     convertView = mInflater.inflate(R.layout.list_header, null);
                     holder.textView = (TextView) convertView.findViewById(R.id.text);
                     holder.checkBox = (CheckBox) convertView.findViewById(R.id.checkbox);
-                    holder.checkBox.setTag(mData.get(position));
-                    Log.i("My",mData.get(position).getAsJsonObject().get("isCompleted").toString());
+
+                    JsonObject tmp = mData.get(position).getAsJsonObject();
+                    tmp.addProperty("index", String.valueOf(position));
+                    holder.checkBox.setTag(tmp);
 
                     if((!mData.get(position).getAsJsonObject().get("isCompleted").isJsonNull()) &&
-                            mData.get(position).getAsJsonObject().get("isCompleted").getAsBoolean())
+                            mData.get(position).getAsJsonObject().get("isCompleted").getAsBoolean()) {
                         holder.checkBox.setChecked(true);
+                        holder.textView.setPaintFlags(holder.textView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                        Log.i("My", "asd");
+                    }
 
                     holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -93,6 +102,9 @@ class CustomAdapter extends BaseAdapter {
                             if (((JsonElement)buttonView.getTag()).getAsJsonObject().get("isCompleted").isJsonNull() && !isChecked ||
                                     !((JsonElement)buttonView.getTag()).getAsJsonObject().get("isCompleted").isJsonNull() &&
                                             ((JsonElement)buttonView.getTag()).getAsJsonObject().get("isCompleted").getAsBoolean() == isChecked) return;
+
+                            ((JsonElement)buttonView.getTag()).getAsJsonObject().remove("isCompleted");
+                            ((JsonElement)buttonView.getTag()).getAsJsonObject().addProperty("isCompleted", isChecked);
 
                             JsonObject tmp = new JsonObject();
                             tmp.add("todo", (JsonElement)buttonView.getTag());
@@ -106,6 +118,14 @@ class CustomAdapter extends BaseAdapter {
                                     .setCallback(new FutureCallback<JsonObject>() {
                                         @Override
                                         public void onCompleted(Exception e, JsonObject result) { }});
+
+                            ListView lv = (ListView)((MainActivity)mInflater.getContext()).findViewById(R.id.mListView);
+                            ((TextView)((LinearLayout)getView(((JsonObject)buttonView.getTag()).get("index").getAsInt(), null, lv)).getChildAt(1)).setText("asdas");
+
+                            mData.get(((JsonObject)buttonView.getTag()).get("index").getAsInt()).getAsJsonObject().remove("isCompleted");
+                            mData.get(((JsonObject)buttonView.getTag()).get("index").getAsInt()).getAsJsonObject().addProperty("isCompleted", isChecked);
+
+                            notifyDataSetChanged();
                         }
                     });
 
@@ -130,6 +150,8 @@ class CustomAdapter extends BaseAdapter {
         return convertView;
     }
 
+
+
     public ArrayList<String> getHeaders () {
 
         ArrayList<String> headers = new ArrayList<String>();
@@ -141,13 +163,17 @@ class CustomAdapter extends BaseAdapter {
         return headers;
     }
 
-    public void sendUpdate (JsonElement obj) {
-
-    }
+//    public void registerDataSetObserver(DataSetObserver observer) {
+//        observers.add(observer);
+//    }
+//    public void notifyDataSetChanged(){
+//        for (DataSetObserver observer: observers) {
+//            observer.onChanged();
+//        }
+//    }
 
     public static class ViewHolder {
         public TextView textView;
         public CheckBox checkBox;
     }
-
 }
